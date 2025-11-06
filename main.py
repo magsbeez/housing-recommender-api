@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from typing import List, Dict, Any
 import numpy as np
+from fastapi.middleware.cors import CORSMiddleware
 
 # Import the classes from your finished invention file
 from housing_recommender import ReinforcementEngine, ListingNode, ExternalDataSource
@@ -30,6 +31,22 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# --- ADD THIS CORS MIDDLEWARE BLOCK ---
+origins = [
+    "http://localhost",
+    "http://localhost:8080",
+    "http://127.0.0.1:5500",
+    "*"  # Allows connections from ANY origin (required for local file testing)
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# --- END CORS MIDDLEWARE BLOCK ---
 
 @app.get("/recommendations/")
 async def get_recommendations(budget: float, distance_km: float) -> List[Dict[str, Any]]:
